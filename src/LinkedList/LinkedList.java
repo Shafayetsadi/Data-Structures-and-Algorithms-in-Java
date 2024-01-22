@@ -1,119 +1,164 @@
 package LinkedList;
 
 public class LinkedList {
+    Node head;
+
     // Linked list traversal
-    public static void printList(Node head){
+    public void printList() {
         Node curr = head;
-        while (curr != null){
+        while (curr != null) {
             System.out.print(curr.data + " ");
             curr = curr.next;
         }
+        System.out.println();
     }
-    public static void printListRecursive(Node head){
-        if(head == null) return;
+
+    public void printListRecursive() {
+        printListRecursive(head);
+        System.out.println();
+    }
+
+    public void printListRecursive(Node head) {
+        if (head == null) return;
         System.out.print(head.data + " ");
         printListRecursive(head.next);
     }
 
-    public static Node insertBegin(Node head, int data){
+    public void insertBegin(int data) {
         Node temp = new Node(data);
         temp.next = head;
-        return temp;
+        head = temp;
     }
 
-    public static Node insertEnd(Node head, int data){
+    public void insertEnd(int data) {
         Node temp = new Node(data);
-        if(head == null) return temp;
-        Node curr = head.next;
-        while (curr.next != null) curr = curr.next;
-        curr.next = temp;
-        return head;
-    }
-
-    public static Node deleteHead(Node head){
-        if(head == null) return null;
-        else return head.next;
-    }
-
-    public static Node deleteTail(Node head){
-        if(head == null || head.next == null) return null;
-        Node curr = head;
-        while (curr.next.next != null){
-            curr = curr.next;
+        if (head == null) {
+            head = temp;
+        } else {
+            Node curr = head;
+            while (curr.next != null) curr = curr.next;
+            curr.next = temp;
         }
-        curr.next = null;
-        return head;
     }
 
-    public static Node insertPos(Node head, int pos, int data){
+    public void deleteHead() {
+        if (head != null) head = head.next;
+    }
+
+    public void deleteTail() {
+        if (head != null) {
+            if (head.next == null) head = null;
+            else {
+                Node curr = head;
+                while (curr.next.next != null) curr = curr.next;
+                curr.next = null;
+            }
+        }
+    }
+
+    public void insertPos(int pos, int data) {
         Node temp = new Node(data);
-        if(pos == 1){
+        if (pos == 0) {
             temp.next = head;
-            return temp;
+            head = temp;
+        } else {
+            Node curr = head;
+            for (int i = 1; i <= pos - 1 && curr != null; i++) {
+                curr = curr.next;
+            }
+            if (curr != null) {
+                temp.next = curr.next;
+                curr.next = temp;
+            }
         }
-        Node curr = head;
-        for(int i = 1; i <= pos - 2 && curr != null; i++){
-            curr = curr.next;
-        }
-        if(curr == null) return head;
-        temp.next = curr.next;
-        curr.next = temp;
-        return head;
     }
 
-    public static Node searchList(Node head, int key){
+    public Node searchList(int key) {
         Node curr = head;
-        while (curr != null){
-            if(curr.data == key) return curr;
+        while (curr != null) {
+            if (curr.data == key) return curr;
             curr = curr.next;
         }
         return null;
     }
 
-    public static Node searchListRecursive(Node head, int key){
-        if(head == null) return null;
-        if(head.data == key) return head;
+    public int searchListIndex(int key) {
+        Node curr = head;
+        int index = 0;
+        while (curr != null) {
+            if (curr.data == key) return index;
+            curr = curr.next;
+            index++;
+        }
+        return -1;
+    }
+
+    public Node searchListRecursive(int key) {
+        return searchListRecursive(head, key);
+    }
+
+    public Node searchListRecursive(Node head, int key) {
+        if (head == null) return null;
+        if (head.data == key) return head;
         return searchListRecursive(head.next, key);
     }
-    public static int searchListRecursiveIndex(Node head, int key){
-        if(head == null) return -1;
-        if(head.data == key) return 1;
+
+    public int searchListRecursiveIndex(int key) {
+        return searchListRecursiveIndex(head, key);
+    }
+
+    public int searchListRecursiveIndex(Node head, int key) {
+        if (head == null) return -1;
+        if (head.data == key) return 0;
 
         int index = searchListRecursiveIndex(head.next, key);
-        if(index == -1) return -1;
+        if (index == -1) return -1;
         else return (index + 1);
     }
 
     public static void main(String[] args) {
-        Node head = new Node(10);
-        Node a = new Node(20);
-        Node b = new Node(30);
+        LinkedList list = new LinkedList();
+        list.insertEnd(10);
+        list.insertEnd(20);
+        list.insertEnd(30);
+        System.out.println("The list is:");
+        list.printList();
+        list.printListRecursive();
 
-        head.next = a;
-        a.next = b;
+        System.out.println("After inserting 5 at the beginning:");
+        list.insertBegin(5);
+        list.printList();
 
-        printList(head);
-        System.out.println();
+        System.out.println("After inserting 45 at the end:");
+        list.insertEnd(45);
+        list.printList();
 
-        printListRecursive(head);
-        System.out.println();
+        System.out.println("After deleting head:");
+        list.deleteHead();
+        list.printList();
 
-        head = insertBegin(head, 5);
-        printList(head);
-        System.out.println();
+        System.out.println("After deleting tail:");
+        list.deleteTail();
+        list.printList();
 
-        head = insertEnd(head, 45);
-        printList(head);
-        System.out.println();
+        System.out.println("After inserting 15 at position 2:");
+        list.insertPos(2, 15);
+        list.printList();
 
-        head = deleteHead(head);
-        printList(head);
-        System.out.println();
+        Node node = list.searchList(20);
+        if (node != null) System.out.println("Found: " + node.data);
+        else System.out.println("Not found");
 
-        head = deleteTail(head);
-        printList(head);
-        System.out.println();
+        int index = list.searchListIndex(20);
+        if (index != -1) System.out.println("Found at: " + index);
+        else System.out.println("Not found");
 
+        node = list.searchListRecursive(20);
+        if (node != null) System.out.println("Found: " + node.data);
+        else System.out.println("Not found");
 
+        index = list.searchListRecursiveIndex(20);
+        if (index != -1) System.out.println("Found at: " + index);
+        else System.out.println("Not found");
     }
 }
